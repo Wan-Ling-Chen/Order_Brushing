@@ -1,19 +1,19 @@
 library(dplyr)
-# loading data and a glimpse of data 
+# Loading data and a glimpse of data 
 data <- read.csv('/Users/chenlyn/Desktop/Order Brushing/order_brush_order.csv')
 head(data)
 length(unique(data$shopid))
-# convert event_time from string to time format
+# Convert event_time from string to time format
 data$event_time <- as.POSIXct(as.character(data$event_time), "%Y-%m-%d %H:%M:%s")
 
-# how many orders on each shop
+# How many orders on each shop
 shop_order <- data %>% group_by(shopid)%>%count()
 # If the shop has less than 3 orders, the shop is not suspected.
 no_brushing_shop <- shop_order[which(shop_order[,'n'] < 3),]
 # Remain shop having more than 2 orders
 brushing_shop_data <- subset(data, !(data$shopid %in% no_brushing_shop$shopid))
 
-#sort the data by shopid, userid and event_time
+# Sort the data by shopid, userid and event_time
 brushing_shop_data <- brushing_shop_data %>% arrange(shopid, userid, event_time)
 
 # To find users who placed multiple orders on the same shop
